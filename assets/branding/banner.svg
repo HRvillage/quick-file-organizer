@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360">
+  <rect width="1280" height="360" rx="28" fill="#F6F8FB"/>
+  <rect x="52" y="52" width="256" height="256" rx="56" fill="#2F80ED"/>
+  <path d="M98 140c0-15 12-27 27-27h62l26 29h62c15 0 27 12 27 27v102c0 15-12 27-27 27H125c-15 0-27-12-27-27V140z" fill="#fff"/>
+  <path d="M137 195h126M137 229h95" stroke="#2F80ED" stroke-width="17" stroke-linecap="round"/>
+  <text x="360" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="62" font-weight="700" fill="#1E293B">Quick File Organizer</text>
+  <text x="362" y="211" font-family="Microsoft JhengHei, Segoe UI, Arial, sans-serif" font-size="34" fill="#475569">檔案整理工具</text>
+  <text x="362" y="264" font-family="Segoe UI, Arial, sans-serif" font-size="25" fill="#64748B">Fast, safe and portable batch file renaming for Windows.</text>
+</svg>

@@ -1,0 +1,33 @@
+# Build output
+bin/
+obj/
+release/
+publish/
+
+# Local application data
+Data/settings.json
+Data/*.json
+src/QuickFileOrganizer/Data/settings.json
+src/QuickFileOrganizer/Data/*.json
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
