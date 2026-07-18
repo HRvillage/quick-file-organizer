@@ -40,6 +40,18 @@ Quick File Organizer helps rename groups of files with a consistent naming patte
   <img src="assets/screenshots/main-window-zh.png" alt="Quick File Organizer main window" width="820">
 </p>
 
+> **Known Issue:** Minor UI scaling issues may occur on some laptops using 125% or 150% Windows display scaling. This will be addressed in **v1.0.1**.
+
+**Planned Fix:** Monday (v1.0.1)
+
+The upcoming update will include:
+
+- Improved DPI scaling support
+- Better layout compatibility across different screen resolutions
+- Optimized control spacing and sizing
+
+Thank you for your patience and support.
+
 ## Download
 
 Download the latest portable package from the repository's **Releases** page. Extract the ZIP and run:
