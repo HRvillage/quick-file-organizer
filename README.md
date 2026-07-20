@@ -100,9 +100,15 @@ End users do not need the .NET SDK, Visual Studio, or VS Code.
 
 ## Feedback
 
-Found a bug or have a suggestion? Please open an issue in the GitHub repository:
+If you encounter any issues or have suggestions,
+
+please open an Issue on GitHub.
 
 https://github.com/HRvillage/quick-file-organizer/issues
+
+Your feedback helps improve Quick File Organizer.
+
+Thank you for using it!
 
 ## Privacy and Safety
 
