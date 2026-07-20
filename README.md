@@ -100,9 +100,7 @@ End users do not need the .NET SDK, Visual Studio, or VS Code.
 
 ## Feedback
 
-If you encounter any issues or have suggestions,
-
-please open an Issue on GitHub.
+If you encounter any issues or have suggestions,please open an Issue on GitHub.
 
 https://github.com/HRvillage/quick-file-organizer/issues
 
