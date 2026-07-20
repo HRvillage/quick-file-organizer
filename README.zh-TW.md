@@ -3,85 +3,72 @@
 </p>
 
 <p align="center">
-  <strong>適用於 Windows 的輕量、免安裝批次檔案重新命名工具。</strong><br>
-  支援自訂名稱、日期來源、流水號、檔案類型分類、即時預覽與單次復原。
+  <strong>輕量、可攜式的 Windows 批次檔案重新命名工具。</strong><br>
+  支援自訂名稱、日期來源、流水號、檔案類型分類、即時預覽與一鍵還原。
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> ·
-  <a href="docs/zh-TW/UserGuide.md">使用教學</a> ·
-  <a href="CHANGELOG.md">版本紀錄</a> ·
-  <a href="docs/zh-TW/Development.md">開發歷程</a>
+  <a href="README.md">English</a> |
+  <a href="docs/zh-TW/UserGuide.md">使用指南</a> |
+  <a href="CHANGELOG.md">更新紀錄</a> |
+  <a href="docs/zh-TW/Development.md">開發紀錄</a>
 </p>
 
-## 工具介紹
+## 專案概覽
 
-Quick File Organizer（檔案整理工具）用來快速替同一資料夾內的多個檔案套用一致的命名規則。操作介面維持單頁、固定尺寸，不需要複雜設定，也不會因為檔案數量增加而讓畫面變得擁擠。
+Quick File Organizer 可協助你用一致的命名格式批次整理檔案，同時保留清楚、易懂的操作流程。它是可攜式 Windows 工具：下載自包含套件、解壓縮後執行 EXE，不需要另外安裝 .NET Runtime。
 
-發布版本採用可攜式封裝。完成編譯後，使用者只要解壓縮並執行 EXE，不需要另外安裝 Visual Studio、VS Code、.NET SDK 或其他開發工具。
+應用程式提供可調整大小的 Windows 介面、最大化支援、DPI 顯示縮放相容性、有限螢幕空間下的垂直捲動備援，以及正式的 Windows 應用程式圖示。
 
 ## 主要功能
 
-- 選擇資料夾後批次重新命名檔案
-- 可組合「名稱 1、名稱 2、日期、流水號」
-- 日期來源可選今日、手動輸入、建立時間或修改時間
-- 依檔案時間排序後再編流水號
-- 可延續相同命名組合上次使用的下一個號碼
-- 檔案類型依圖片、影片、文件、壓縮檔分類
-- 影片支援 MP4、MOV、AVI
-- 執行前顯示即時單行預覽
-- 可復原上一次重新命名操作
-- 支援拖曳資料夾到視窗
-- 可快速切換中文與英文介面
-- 設定與復原紀錄保存在程式旁的 `Data` 資料夾
-- 固定尺寸介面，不需要捲動，也不能手動拉伸
+- 從指定資料夾批次重新命名檔案
+- 可組合名稱 1、名稱 2、日期與流水號
+- 日期來源支援今天、手動日期、建立時間與修改時間
+- 可依檔案時間排序後再編號
+- 可依相同命名組合接續上一次編號
+- 依圖片、影片、文件與壓縮檔分類選擇檔案類型
+- 影片格式支援 MP4、MOV 與 AVI
+- 重新命名前提供單行即時預覽
+- 可還原最近一次成功的重新命名操作
+- 支援資料夾拖放
+- 支援中文與英文介面切換
+- 設定與操作資料儲存在本機 `Data` 資料夾
+- 可調整大小並支援最大化的 Windows 介面
+- 支援不同 Windows DPI 顯示縮放設定
+- 螢幕空間有限時提供垂直捲動備援
+- 內建自訂 Windows 應用程式圖示
 
-## 操作畫面
+## 畫面截圖
 
 <p align="center">
-  <img src="assets/screenshots/main-window-zh.png" alt="Quick File Organizer 中文介面" width="820">
+  <img src="assets/screenshots/main-window-zh.png" alt="Quick File Organizer 主畫面" width="820">
 </p>
 
-## ⚠️ 已知問題
+## 下載
 
-部分筆記型電腦或 Windows 裝置在使用 **125% / 150% 顯示縮放** 時，介面可能會出現少數控制項被擠壓或裁切的情況。
-
-目前已確認問題原因，並正在進行版面配置最佳化。
-
-**預計修正版本：v1.0.1**
-
-更新內容預計包含：
-
-- 改善 Windows DPI 縮放支援
-- 提升筆記型電腦顯示相容性
-- 優化控制項間距與版面配置
-
-感謝您的耐心與支持。
-
-## 下載與使用
-
-請到 GitHub 專案的 **Releases** 頁面下載最新的可攜版壓縮檔。解壓縮後直接執行：
+請從 GitHub Repository 的 **Releases** 頁面下載可攜式 ZIP，解壓縮後執行：
 
 ```text
 QuickFileOrganizer.exe
 ```
 
-不需要安裝。
+不需要安裝，也不需要另外安裝 .NET Runtime。
 
-## 快速使用
+## 快速開始
 
-1. 選擇資料夾，或把一個資料夾拖曳到程式視窗。
-2. 視需求輸入「名稱 1」與「名稱 2」，空白欄位會自動略過。
-3. 設定日期來源、日期位置、起始號碼與流水號位數。
-4. 勾選要處理的副檔名；也可以直接勾選整個檔案分類。
-5. 確認即時預覽後，按下「開始重新命名」。
-6. 若操作有誤，可使用「還原上一次」。
+1. 選擇資料夾，或將資料夾拖放到視窗中。
+2. 視需要輸入名稱 1 與名稱 2。
+3. 選擇日期來源、日期位置、起始號碼與流水號位數。
+4. 選擇一個或多個檔案類型，或直接選擇整個分類。
+5. 確認預覽結果後，按下 **開始重新命名**。
+6. 若最近一次操作需要復原，可使用 **還原上一次**。
 
-完整說明請參閱[繁體中文使用教學](docs/zh-TW/UserGuide.md)。
+完整說明請參考 [繁體中文使用指南](docs/zh-TW/UserGuide.md) 或 [English User Guide](docs/en/UserGuide.md)。
 
-## 編譯方式
+## 建置
 
-只有自行編譯原始碼時才需要：
+僅在自行建置時需要：
 
 - Windows 10 或 Windows 11
 - .NET 8 SDK
@@ -92,35 +79,41 @@ QuickFileOrganizer.exe
 BUILD_RELEASE.bat
 ```
 
-完成品會產生在：
+自包含的可攜式版本會輸出到：
 
 ```text
 release\
 ```
 
-一般使用者不需要安裝 .NET SDK、Visual Studio 或 VS Code。
+一般使用者不需要 .NET SDK、Visual Studio 或 VS Code。
 
 ## 文件
 
-- [使用教學 — 繁體中文](docs/zh-TW/UserGuide.md)
-- [User Guide — English](docs/en/UserGuide.md)
-- [開發歷程 — 繁體中文](docs/zh-TW/Development.md)
-- [Development Journey — English](docs/en/Development.md)
-- [常見問題 — 繁體中文](docs/zh-TW/FAQ.md)
-- [FAQ — English](docs/en/FAQ.md)
-- [版本紀錄](CHANGELOG.md)
-- [開發方向](ROADMAP.md)
+- [使用指南 - 繁體中文](docs/zh-TW/UserGuide.md)
+- [User Guide - English](docs/en/UserGuide.md)
+- [開發紀錄 - 繁體中文](docs/zh-TW/Development.md)
+- [Development Journey - English](docs/en/Development.md)
+- [常見問題 - 繁體中文](docs/zh-TW/FAQ.md)
+- [FAQ - English](docs/en/FAQ.md)
+- [更新紀錄](CHANGELOG.md)
+- [Roadmap](ROADMAP.md)
+
+## 意見回饋
+
+如果你發現問題或有功能建議，歡迎到 GitHub Issues 回報：
+
+https://github.com/HRvillage/quick-file-organizer/issues
 
 ## 隱私與安全
 
-本工具完全在本機運作，不會上傳檔案、不會傳送檔名，也不需要登入帳號。偏好設定與上一次重新命名紀錄只會保存在程式旁的 `Data` 資料夾。
+Quick File Organizer 在本機運作，不會上傳檔案、不會傳送檔名，也不需要線上帳號。重新命名紀錄與偏好設定會儲存在應用程式旁的 `Data` 資料夾。
 
-執行重新命名前，程式會先檢查檔名衝突，且不會覆蓋已存在的檔案。
+重新命名前，程式會檢查檔名衝突，不會覆蓋既有檔案。
 
 ## 授權
 
-本專案採用 [MIT License](LICENSE)。
+本專案採用 [MIT License](LICENSE) 授權。
 
 ## 作者
 
-© 2026 [HeroRaye](https://www.youtube.com/@HeroRaye)
+Copyright 2026 [HeroRaye](https://www.youtube.com/@HeroRaye)

@@ -6,16 +6,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationIcon>Assets\app-icon.ico</ApplicationIcon>
     <AssemblyName>QuickFileOrganizer</AssemblyName>
     <RootNamespace>QuickFileOrganizer</RootNamespace>
-    <Version>1.0.0</Version>
-    <FileVersion>1.0.0.0</FileVersion>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Version>1.0.1</Version>
+    <FileVersion>1.0.1.0</FileVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
     <Authors>HeroRaye</Authors>
     <Copyright>Copyright © 2026 HeroRaye</Copyright>
     <Product>Quick File Organizer</Product>
     <Description>檔案整理工具 / Quick File Organizer</Description>
-    <RepositoryUrl>https://github.com/HeroRaye/quick-file-organizer</RepositoryUrl>
+    <RepositoryUrl>https://github.com/HRvillage/quick-file-organizer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Assets\app-icon.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

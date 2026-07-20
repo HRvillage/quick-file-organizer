@@ -28,21 +28,21 @@ Description: A lightweight Windows batch file renaming tool with customizable na
 ```powershell
 git init
 git add .
-git commit -m "Release Quick File Organizer v1.0.0"
+git commit -m "Release Quick File Organizer v1.0.1"
 git branch -M main
 ```
 
 把下方網址中的 GitHub 帳號改成你的實際帳號：
 
 ```powershell
-git remote add origin https://github.com/HeroRaye/quick-file-organizer.git
+git remote add origin https://github.com/HRvillage/quick-file-organizer.git
 git push -u origin main
 ```
 
-若你的 GitHub 帳號不是 `HeroRaye`，也要同步修改：
+若 Repository 位置不同，也要同步修改：
 
 - `src/QuickFileOrganizer/QuickFileOrganizer.csproj` 的 `RepositoryUrl`
-- README 中未來新增的 GitHub 專案網址
+- README 中的 GitHub 專案網址
 
 YouTube 版權連結不需要修改。
 
@@ -96,7 +96,7 @@ Data\
 請實際測試：
 
 - 程式能正常啟動。
-- 右下角版本顯示 `v1.0.0`。
+- 右下角版本顯示 `v1.0.1`。
 - 中文與英文切換正常。
 - 重新命名與還原功能正常。
 - 換到一台沒有 .NET SDK 的 Windows 電腦仍能執行。
@@ -114,7 +114,7 @@ Data\
 ZIP 檔名建議：
 
 ```text
-QuickFileOrganizer_v1.0.0_Portable.zip
+QuickFileOrganizer_v1.0.1_Portable.zip
 ```
 
 不要把整個原始碼或 `release` 外層資料夾包進 Portable ZIP。
@@ -126,21 +126,21 @@ QuickFileOrganizer_v1.0.0_Portable.zip
 3. 選擇 **Choose a tag**，輸入：
 
 ```text
-v1.0.0
+v1.0.1
 ```
 
-4. 選擇 **Create new tag: v1.0.0 on publish**。
+4. 選擇 **Create new tag: v1.0.1 on publish**。
 5. Release title：
 
 ```text
-Quick File Organizer v1.0.0
+Quick File Organizer v1.0.1
 ```
 
-6. 將 `RELEASE_NOTES_v1.0.0.md` 的內容貼到說明欄。
+6. 將 `RELEASE_NOTES_v1.0.1.md` 的內容貼到說明欄。
 7. 上傳：
 
 ```text
-QuickFileOrganizer_v1.0.0_Portable.zip
+QuickFileOrganizer_v1.0.1_Portable.zip
 ```
 
 8. 不要勾選 Pre-release。
@@ -151,7 +151,7 @@ QuickFileOrganizer_v1.0.0_Portable.zip
 - README 圖片與連結是否正常。
 - 中文 README 是否能從首頁點入。
 - Release ZIP 是否能下載並正常解壓縮。
-- EXE 版本是否為 `1.0.0`。
+- EXE 版本是否為 `1.0.1`。
 - Repository 內沒有 `bin`、`obj`、`release` 或個人設定檔。
 - `Data/settings.json` 沒有被上傳。
 

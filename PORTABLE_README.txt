@@ -1,4 +1,4 @@
-Quick File Organizer v1.0.0
+Quick File Organizer v1.0.1
 檔案整理工具
 
 1. Run QuickFileOrganizer.exe directly. No installation is required.

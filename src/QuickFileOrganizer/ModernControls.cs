@@ -56,12 +56,17 @@ internal sealed class ModernButton : Button
 
     public ModernButton()
     {
+        SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+        AutoSize = true;
+        AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        AutoEllipsis = false;
         FlatStyle = FlatStyle.Flat;
         FlatAppearance.BorderSize = 0;
         UseVisualStyleBackColor = false;
         Cursor = Cursors.Hand;
-        Height = 36;
-        Padding = new Padding(12, 0, 12, 0);
+        MinimumSize = new Size(80, 34);
+        Height = 34;
+        Padding = new Padding(10, 0, 10, 0);
         BackColor = NormalBackColor;
         ForeColor = Color.FromArgb(30, 41, 59);
         Font = new Font("Segoe UI", 9F, FontStyle.Bold);
@@ -104,20 +109,37 @@ internal sealed class ModernButton : Button
     protected override void OnResize(EventArgs e)
     {
         base.OnResize(e);
-        using var path = CreatePath(ClientRectangle, CornerRadius);
-        Region = new Region(path);
+        UpdateRegion();
+        Parent?.Invalidate(Bounds, false);
+    }
+
+    protected override void OnPaintBackground(PaintEventArgs pevent)
+    {
+        using var brush = new SolidBrush(Parent?.BackColor ?? SystemColors.Control);
+        pevent.Graphics.FillRectangle(brush, ClientRectangle);
     }
 
     protected override void OnPaint(PaintEventArgs pevent)
     {
+        OnPaintBackground(pevent);
         pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-        using var path = CreatePath(new Rectangle(0, 0, Width - 1, Height - 1), CornerRadius);
+        var bounds = new Rectangle(1, 1, Math.Max(1, Width - 3), Math.Max(1, Height - 3));
+        using var path = CreatePath(bounds, CornerRadius);
         using var brush = new SolidBrush(BackColor);
         using var pen = new Pen(BorderColor, BorderThickness);
         pevent.Graphics.FillPath(brush, path);
         pevent.Graphics.DrawPath(pen, path);
         TextRenderer.DrawText(pevent.Graphics, Text, Font, ClientRectangle, ForeColor,
-            TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+            TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
+    }
+
+    private void UpdateRegion()
+    {
+        if (Width <= 0 || Height <= 0) return;
+        using var path = CreatePath(new Rectangle(0, 0, Width, Height), CornerRadius);
+        var oldRegion = Region;
+        Region = new Region(path);
+        oldRegion?.Dispose();
     }
 
     private static GraphicsPath CreatePath(Rectangle bounds, int radius)
@@ -142,8 +164,8 @@ internal sealed class LanguageToggle : UserControl
 
     public LanguageToggle()
     {
-        Width = 116;
-        Height = 34;
+        Width = 122;
+        Height = 32;
         BackColor = Color.FromArgb(226, 232, 240);
         Padding = new Padding(3);
         _zh.Text = "中文";
@@ -155,7 +177,7 @@ internal sealed class LanguageToggle : UserControl
             button.Cursor = Cursors.Hand;
             button.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
             button.Dock = DockStyle.Left;
-            button.Width = 55;
+            button.Width = 58;
             Controls.Add(button);
         }
         _en.BringToFront();

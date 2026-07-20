@@ -8,15 +8,17 @@
 </p>
 
 <p align="center">
-  <a href="README.zh-TW.md">繁體中文</a> ·
-  <a href="docs/en/UserGuide.md">User Guide</a> ·
-  <a href="CHANGELOG.md">Changelog</a> ·
+  <a href="README.zh-TW.md">Traditional Chinese</a> |
+  <a href="docs/en/UserGuide.md">User Guide</a> |
+  <a href="CHANGELOG.md">Changelog</a> |
   <a href="docs/en/Development.md">Development Journey</a>
 </p>
 
 ## Overview
 
-Quick File Organizer helps rename groups of files with a consistent naming pattern while keeping the workflow compact and easy to understand. It is designed as a portable Windows utility: build the self-contained release once, then run the executable without installing development tools or a separate .NET runtime.
+Quick File Organizer helps rename groups of files with a consistent naming pattern while keeping the workflow clear and approachable. It is designed as a portable Windows utility: download the self-contained package, extract it, and run the executable without installing a separate .NET runtime.
+
+The app includes a resizable, DPI-aware Windows interface with maximize support, vertical scrolling as a fallback on limited screen space, and a custom Windows application icon.
 
 ## Features
 
@@ -32,7 +34,10 @@ Quick File Organizer helps rename groups of files with a consistent naming patte
 - Folder drag-and-drop
 - Chinese and English interface switch
 - Portable data storage in the local `Data` folder
-- Fixed-size compact interface with no scrolling
+- Resizable Windows interface with maximize support
+- DPI-aware layout for different Windows display scaling settings
+- Vertical scrolling available as a fallback on limited screen space
+- Custom Windows application icon
 
 ## Screenshot
 
@@ -40,27 +45,15 @@ Quick File Organizer helps rename groups of files with a consistent naming patte
   <img src="assets/screenshots/main-window-zh.png" alt="Quick File Organizer main window" width="820">
 </p>
 
-> **Known Issue:** Minor UI scaling issues may occur on some laptops using 125% or 150% Windows display scaling. This will be addressed in **v1.0.1**.
-
-**Planned Fix:** Monday (v1.0.1)
-
-The upcoming update will include:
-
-- Improved DPI scaling support
-- Better layout compatibility across different screen resolutions
-- Optimized control spacing and sizing
-
-Thank you for your patience and support.
-
 ## Download
 
-Download the latest portable package from the repository's **Releases** page. Extract the ZIP and run:
+Download the portable ZIP from the repository's **Releases** page, extract it, and run:
 
 ```text
 QuickFileOrganizer.exe
 ```
 
-No installation is required.
+No installation or separate .NET runtime is required.
 
 ## Quick Start
 
@@ -96,14 +89,20 @@ End users do not need the .NET SDK, Visual Studio, or VS Code.
 
 ## Documentation
 
-- [User Guide — English](docs/en/UserGuide.md)
-- [使用教學 — 繁體中文](docs/zh-TW/UserGuide.md)
-- [Development Journey — English](docs/en/Development.md)
-- [開發歷程 — 繁體中文](docs/zh-TW/Development.md)
-- [FAQ — English](docs/en/FAQ.md)
-- [常見問題 — 繁體中文](docs/zh-TW/FAQ.md)
-- [Changelog / 版本紀錄](CHANGELOG.md)
-- [Roadmap / 開發方向](ROADMAP.md)
+- [User Guide - English](docs/en/UserGuide.md)
+- [User Guide - Traditional Chinese](docs/zh-TW/UserGuide.md)
+- [Development Journey - English](docs/en/Development.md)
+- [Development Journey - Traditional Chinese](docs/zh-TW/Development.md)
+- [FAQ - English](docs/en/FAQ.md)
+- [FAQ - Traditional Chinese](docs/zh-TW/FAQ.md)
+- [Changelog](CHANGELOG.md)
+- [Roadmap](ROADMAP.md)
+
+## Feedback
+
+Found a bug or have a suggestion? Please open an issue in the GitHub repository:
+
+https://github.com/HRvillage/quick-file-organizer/issues
 
 ## Privacy and Safety
 
@@ -117,4 +116,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Author
 
-© 2026 [HeroRaye](https://www.youtube.com/@HeroRaye)
+Copyright 2026 [HeroRaye](https://www.youtube.com/@HeroRaye)

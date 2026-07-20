@@ -4,11 +4,22 @@ namespace QuickFileOrganizer;
 
 internal sealed class MainForm : Form
 {
+    private const int TargetClientWidth = 1040;
+    private const int TargetClientHeight = 680;
+    private const int MinimumClientWidth = 860;
+    private const int MinimumClientHeight = 560;
+    private const int FileTypesCardLogicalHeight = 128;
+    private static readonly Padding RootPadding = new(16, 10, 16, 8);
+
     private readonly AppSettings _settings;
     private bool _english;
     private bool _updatingChecks;
     private bool _applyingLanguage;
-    private readonly TableLayoutPanel _root = new();
+    private FormWindowState _lastWindowState = FormWindowState.Normal;
+    private readonly TableLayoutPanel _mainLayout = new();
+    private readonly Panel _contentPanel = new();
+    private readonly TableLayoutPanel _contentLayout = new();
+    private readonly Panel _contentSpacer = new();
 
     private readonly Label _titleLabel = new();
     private readonly Label _subtitleLabel = new();
@@ -23,6 +34,7 @@ internal sealed class MainForm : Form
     private readonly Label _previewTitle = new();
     private readonly TextBox _folderText = new();
     private readonly Label _dragHint = new();
+    private readonly FlowLayoutPanel _folderButtons = new();
     private readonly ModernButton _browseButton = new();
     private readonly ModernButton _folderOpenButton = new();
     private readonly TextBox _name1Text = new();
@@ -81,44 +93,62 @@ internal sealed class MainForm : Form
         _settings = AppSettings.Load();
         _english = string.Equals(_settings.Language, "en", StringComparison.OrdinalIgnoreCase);
         StartPosition = FormStartPosition.CenterScreen;
-        FormBorderStyle = FormBorderStyle.FixedSingle;
-        MaximizeBox = false;
-        ClientSize = new Size(1000, 700);
-        MinimumSize = Size;
-        MaximumSize = Size;
+        FormBorderStyle = FormBorderStyle.Sizable;
+        MaximizeBox = true;
+        MinimizeBox = true;
         WindowState = FormWindowState.Normal;
         AutoScaleMode = AutoScaleMode.Dpi;
+        ClientSize = new Size(TargetClientWidth, TargetClientHeight);
+        MinimumSize = SizeFromClientSize(new Size(MinimumClientWidth, MinimumClientHeight));
         Font = new Font("Segoe UI", 9F);
         BackColor = PageBack;
         ForeColor = TextPrimary;
+        Icon = LoadWindowIcon();
         AllowDrop = true;
         DoubleBuffered = true;
 
         BuildUi();
         LoadSettingsIntoUi();
         ApplyLanguage();
+        ConfigureInitialWindowSize();
         WireEvents();
         RefreshPreview();
+        UpdateFileTypesCardHeight();
     }
 
     private void BuildUi()
     {
-        _root.Dock = DockStyle.Fill;
-        _root.Padding = new Padding(20, 14, 20, 12);
-        _root.ColumnCount = 1;
-        _root.RowCount = 7;
-        _root.BackColor = PageBack;
-        _root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 66));
-        _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 112));
-        _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 166));
-        _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 122));
-        _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 96));
-        _root.RowStyles.Add(new RowStyle(SizeType.Absolute, 46));
-        _root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        Controls.Add(_root);
+        _mainLayout.Dock = DockStyle.Fill;
+        _mainLayout.ColumnCount = 1;
+        _mainLayout.RowCount = 3;
+        _mainLayout.BackColor = PageBack;
+        _mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        _mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        _mainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        _mainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        Controls.Add(_mainLayout);
 
-        var header = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, Margin = new Padding(0, 0, 0, 8) };
+        _contentPanel.Dock = DockStyle.Fill;
+        _contentPanel.AutoScroll = true;
+        _contentPanel.BackColor = PageBack;
+        _mainLayout.Controls.Add(_contentPanel, 0, 0);
+
+        _contentLayout.Dock = DockStyle.Top;
+        _contentLayout.AutoSize = false;
+        _contentLayout.Padding = RootPadding;
+        _contentLayout.ColumnCount = 1;
+        _contentLayout.RowCount = 6;
+        _contentLayout.BackColor = PageBack;
+        _contentLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        _contentLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        _contentLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        _contentLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        _contentLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        _contentLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        _contentLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        _contentPanel.Controls.Add(_contentLayout);
+
+        var header = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, ColumnCount = 2, Margin = new Padding(0, 0, 0, 8) };
         header.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         header.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         var titleStack = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Margin = new Padding(0) };
@@ -134,13 +164,16 @@ internal sealed class MainForm : Form
         _languageToggle.Margin = new Padding(12, 5, 0, 0);
         header.Controls.Add(titleStack, 0, 0);
         header.Controls.Add(_languageToggle, 1, 0);
-        _root.Controls.Add(header, 0, 0);
+        _contentLayout.Controls.Add(header, 0, 0);
 
-        BuildFolderSection(); _root.Controls.Add(_folderCard, 0, 1);
-        BuildNamingSection(); _root.Controls.Add(_namingCard, 0, 2);
-        BuildTypesSection(); _root.Controls.Add(_typesCard, 0, 3);
-        BuildPreviewSection(); _root.Controls.Add(_previewCard, 0, 4);
-        _root.Controls.Add(BuildActionSection(), 0, 5);
+        BuildFolderSection(); _contentLayout.Controls.Add(_folderCard, 0, 1);
+        BuildNamingSection(); _contentLayout.Controls.Add(_namingCard, 0, 2);
+        BuildTypesSection(); _contentLayout.Controls.Add(_typesCard, 0, 3);
+        BuildPreviewSection(); _contentLayout.Controls.Add(_previewCard, 0, 4);
+        _contentSpacer.Dock = DockStyle.Fill;
+        _contentSpacer.BackColor = PageBack;
+        _contentLayout.Controls.Add(_contentSpacer, 0, 5);
+        _mainLayout.Controls.Add(BuildActionSection(), 0, 1);
 
         _copyrightLabel.AutoSize = true;
         _copyrightLabel.LinkColor = Color.FromArgb(59, 104, 170);
@@ -148,18 +181,118 @@ internal sealed class MainForm : Form
         _copyrightLabel.VisitedLinkColor = Color.FromArgb(59, 104, 170);
         _copyrightLabel.LinkBehavior = LinkBehavior.HoverUnderline;
         _copyrightLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        _copyrightLabel.Margin = new Padding(0, 4, 0, 0);
+        _copyrightLabel.Margin = new Padding(0, 2, 0, 0);
         _copyrightLabel.Cursor = Cursors.Hand;
         _copyrightLabel.LinkClicked += (_, _) => OpenExternalUrl("https://www.youtube.com/@HeroRaye");
-        _root.Controls.Add(_copyrightLabel, 0, 6);
+        _mainLayout.Controls.Add(_copyrightLabel, 0, 2);
     }
 
-    private static void ConfigureCard(RoundedPanel card)
+    private void ConfigureInitialWindowSize()
+    {
+        ClientSize = new Size(TargetClientWidth, TargetClientHeight);
+        WindowState = FormWindowState.Normal;
+        CenterToScreen();
+        ResizeContentRoot();
+    }
+
+    private void ResizeContentRoot()
+    {
+        int width = Math.Max(0, _contentPanel.ClientSize.Width - _contentPanel.Padding.Horizontal);
+        int preferredHeight = _contentLayout.GetPreferredSize(new Size(width, 0)).Height;
+        if (preferredHeight > _contentPanel.ClientSize.Height)
+            width = Math.Max(0, width - SystemInformation.VerticalScrollBarWidth);
+        preferredHeight = _contentLayout.GetPreferredSize(new Size(width, 0)).Height;
+        int height = Math.Max(_contentPanel.ClientSize.Height, preferredHeight);
+        _contentLayout.Size = new Size(width, height);
+        _contentPanel.AutoScrollMinSize = new Size(0, height);
+    }
+
+    private void ResizeCommandButtons()
+    {
+        SizeButtonToText(_browseButton, 98);
+        SizeButtonToText(_folderOpenButton, 82);
+        _folderButtons.PerformLayout();
+        SizeButtonToText(_refreshButton, 124);
+        SizeButtonToText(_undoButton, 112);
+        SizeButtonToText(_renameButton, 142);
+        SizeButtonToText(_actionOpenButton, 112);
+    }
+
+    private void RefreshResponsiveLayout()
+    {
+        if (_contentPanel.Parent is null) return;
+        _mainLayout.SuspendLayout();
+        try
+        {
+            ResizeCommandButtons();
+            ResizeContentRoot();
+            _mainLayout.PerformLayout();
+        }
+        finally
+        {
+            _mainLayout.ResumeLayout(true);
+        }
+    }
+
+    private static void SizeButtonToText(ModernButton button, int minimumWidth)
+    {
+        var measured = TextRenderer.MeasureText(button.Text, button.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.SingleLine);
+        int width = Math.Max(minimumWidth, measured.Width + button.Padding.Horizontal + 24);
+        button.AutoEllipsis = false;
+        button.AutoSize = false;
+        button.MinimumSize = Size.Empty;
+        button.Size = new Size(width, 36);
+        button.MinimumSize = button.Size;
+    }
+
+    private static Icon LoadWindowIcon()
+    {
+        try
+        {
+            return Icon.ExtractAssociatedIcon(Application.ExecutablePath) ?? SystemIcons.Application;
+        }
+        catch
+        {
+            return SystemIcons.Application;
+        }
+    }
+
+    protected override void OnDpiChanged(DpiChangedEventArgs e)
+    {
+        base.OnDpiChanged(e);
+        UpdateFileTypesCardHeight();
+        RefreshResponsiveLayout();
+    }
+
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+        if (WindowState == _lastWindowState) return;
+        _lastWindowState = WindowState;
+        RefreshResponsiveLayout();
+    }
+
+    private void UpdateFileTypesCardHeight()
+    {
+        int height = LogicalToDevicePixels(FileTypesCardLogicalHeight);
+        _typesCard.AutoSize = false;
+        _typesCard.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        _typesCard.Dock = DockStyle.Fill;
+        _typesCard.Height = height;
+        _typesCard.MinimumSize = new Size(0, height);
+        _typesCard.MaximumSize = new Size(0, height);
+    }
+
+    private int LogicalToDevicePixels(int value) => (int)Math.Ceiling(value * DeviceDpi / 96F);
+
+    private static void ConfigureFixedCard(RoundedPanel card, Padding padding, Padding margin)
     {
         card.Dock = DockStyle.Fill;
-        card.AutoSize = false;
-        card.Margin = new Padding(0, 0, 0, 8);
-        card.Padding = new Padding(16, 12, 16, 13);
+        card.AutoSize = true;
+        card.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        card.Margin = margin;
+        card.MinimumSize = Size.Empty;
+        card.Padding = padding;
     }
 
     private static void ConfigureSectionTitle(Label label)
@@ -167,59 +300,72 @@ internal sealed class MainForm : Form
         label.AutoSize = true;
         label.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         label.ForeColor = TextPrimary;
-        label.Margin = new Padding(0, 0, 0, 10);
+        label.Margin = new Padding(0, 0, 0, 6);
     }
 
     private static void StyleInput(Control control)
     {
         control.Font = new Font("Segoe UI", 9F);
-        control.Height = 32;
-        control.Margin = new Padding(0, 3, 12, 5);
+        control.Height = 30;
+        control.Margin = new Padding(0, 2, 8, 3);
     }
 
     private void BuildFolderSection()
     {
-        ConfigureCard(_folderCard);
-        var outer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2 };
+        ConfigureFixedCard(_folderCard, new Padding(12, 8, 12, 8), new Padding(0, 0, 0, 6));
+        var outer = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 2 };
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         ConfigureSectionTitle(_folderTitle);
         outer.Controls.Add(_folderTitle, 0, 0);
-        var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 3, RowCount = 2 };
+        var table = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, ColumnCount = 2, RowCount = 2 };
         table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         _folderText.Dock = DockStyle.Fill;
         _folderText.BorderStyle = BorderStyle.FixedSingle;
         StyleInput(_folderText);
-        _browseButton.Width = 98;
-        _folderOpenButton.Width = 82;
+        _folderText.Margin = new Padding(0, 2, 12, 3);
+        _folderButtons.AutoSize = true;
+        _folderButtons.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        _folderButtons.FlowDirection = FlowDirection.LeftToRight;
+        _folderButtons.WrapContents = false;
+        _folderButtons.Dock = DockStyle.None;
+        _folderButtons.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        _folderButtons.Margin = new Padding(0);
+        _folderButtons.Padding = new Padding(0);
+        _browseButton.MinimumSize = new Size(98, 34);
+        _folderOpenButton.MinimumSize = new Size(82, 34);
+        _browseButton.Margin = new Padding(0, 2, 8, 3);
+        _folderOpenButton.Margin = new Padding(0, 2, 0, 3);
         _browseButton.ApplySecondary();
         _folderOpenButton.ApplySecondary();
+        _folderButtons.Controls.Add(_browseButton);
+        _folderButtons.Controls.Add(_folderOpenButton);
         _dragHint.AutoSize = true;
         _dragHint.ForeColor = TextSecondary;
         _dragHint.Margin = new Padding(0, 4, 0, 0);
         table.Controls.Add(_folderText, 0, 0);
-        table.Controls.Add(_browseButton, 1, 0);
-        table.Controls.Add(_folderOpenButton, 2, 0);
+        table.Controls.Add(_folderButtons, 1, 0);
         table.Controls.Add(_dragHint, 0, 1);
-        table.SetColumnSpan(_dragHint, 3);
+        table.SetColumnSpan(_dragHint, 2);
         outer.Controls.Add(table, 0, 1);
         _folderCard.Controls.Add(outer);
     }
 
     private void BuildNamingSection()
     {
-        ConfigureCard(_namingCard);
-        var outer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2 };
+        ConfigureFixedCard(_namingCard, new Padding(12, 8, 12, 8), new Padding(0, 0, 0, 6));
+        var outer = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 2 };
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         ConfigureSectionTitle(_namingTitle);
         outer.Controls.Add(_namingTitle, 0, 0);
-        var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 6, RowCount = 4 };
+        var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 4, RowCount = 5, Margin = new Padding(0) };
         table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170));
+        table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170));
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 165));
-        for (int i = 0; i < 4; i++) table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        for (int i = 0; i < 5; i++) table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
         AddPair(table, _name1Label, _name1Text, 0, 0);
         AddPair(table, _name2Label, _name2Text, 2, 0);
@@ -229,36 +375,38 @@ internal sealed class MainForm : Form
         AddPair(table, _datePositionLabel, _datePositionCombo, 2, 1);
         _manualDatePicker.Format = DateTimePickerFormat.Custom;
         _manualDatePicker.CustomFormat = "yyyy/MM/dd";
-        _manualDatePicker.Width = 160;
-        StyleInput(_manualDatePicker);
-        table.Controls.Add(_manualDatePicker, 4, 1);
+        AddInputOnly(table, _manualDatePicker, 0, 2);
         _fileDateCombo.DropDownStyle = ComboBoxStyle.DropDownList;
-        StyleInput(_fileDateCombo);
-        table.Controls.Add(_fileDateCombo, 5, 1);
-        _startNumber.Minimum = 0; _startNumber.Maximum = 999999999; _startNumber.Width = 100;
-        AddPair(table, _startLabel, _startNumber, 0, 2);
+        AddInputOnly(table, _fileDateCombo, 2, 2);
+        _startNumber.Minimum = 0; _startNumber.Maximum = 999999999;
+        AddPair(table, _startLabel, _startNumber, 0, 3);
         _digitsCombo.DropDownStyle = ComboBoxStyle.DropDownList;
-        AddPair(table, _digitsLabel, _digitsCombo, 2, 2);
+        AddPair(table, _digitsLabel, _digitsCombo, 2, 3);
         _continueCheck.AutoSize = true;
         _continueCheck.FlatStyle = FlatStyle.Flat;
         _continueCheck.ForeColor = TextPrimary;
-        table.Controls.Add(_continueCheck, 0, 3);
-        table.SetColumnSpan(_continueCheck, 3);
+        _continueCheck.Margin = new Padding(0, 4, 8, 0);
+        table.Controls.Add(_continueCheck, 0, 4);
+        table.SetColumnSpan(_continueCheck, 2);
         _continueHint.AutoSize = true;
         _continueHint.ForeColor = TextSecondary;
-        table.Controls.Add(_continueHint, 3, 3);
-        table.SetColumnSpan(_continueHint, 3);
+        _continueHint.Margin = new Padding(0, 6, 0, 0);
+        table.Controls.Add(_continueHint, 2, 4);
+        table.SetColumnSpan(_continueHint, 2);
         outer.Controls.Add(table, 0, 1);
         _namingCard.Controls.Add(outer);
     }
 
     private void BuildTypesSection()
     {
-        ConfigureCard(_typesCard);
-        var outer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2 };
+        ConfigureFixedCard(_typesCard, new Padding(12, 8, 12, 8), new Padding(0, 0, 0, 6));
+        UpdateFileTypesCardHeight();
+        var outer = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 2 };
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         ConfigureSectionTitle(_typesTitle);
         outer.Controls.Add(_typesTitle, 0, 0);
-        var stack = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = false, ColumnCount = 2, RowCount = 2, Margin = new Padding(0) };
+        var stack = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 2, RowCount = 2, Margin = new Padding(0) };
         stack.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         stack.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         stack.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -273,14 +421,14 @@ internal sealed class MainForm : Form
 
     private void AddCategoryRow(TableLayoutPanel stack, int column, int rowIndex, string categoryKey, string[] members)
     {
-        var row = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, WrapContents = true, Margin = new Padding(0, 2, 16, 6), Padding = new Padding(0) };
+        var row = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, WrapContents = true, Margin = new Padding(0, 1, 8, 2), Padding = new Padding(0) };
         var category = new CheckBox { ThreeState = true, AutoCheck = false, AutoSize = true, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9F, FontStyle.Bold), ForeColor = TextPrimary, Tag = categoryKey };
         category.Click += CategoryClicked;
         _categoryChecks[categoryKey] = category;
         row.Controls.Add(category);
         foreach (string key in members)
         {
-            var check = new CheckBox { AutoSize = true, FlatStyle = FlatStyle.Flat, Tag = key, Margin = new Padding(9, 3, 2, 3), ForeColor = TextSecondary };
+            var check = new CheckBox { AutoSize = true, FlatStyle = FlatStyle.Flat, Tag = key, Margin = new Padding(6, 2, 0, 2), ForeColor = TextSecondary };
             check.CheckedChanged += IndividualTypeChanged;
             _typeChecks[key] = check;
             row.Controls.Add(check);
@@ -290,8 +438,11 @@ internal sealed class MainForm : Form
 
     private void BuildPreviewSection()
     {
-        ConfigureCard(_previewCard);
-        var outer = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 3 };
+        ConfigureFixedCard(_previewCard, new Padding(12, 8, 12, 8), new Padding(0, 0, 0, 6));
+        var outer = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 3 };
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         ConfigureSectionTitle(_previewTitle);
         outer.Controls.Add(_previewTitle, 0, 0);
         _summaryLabel.AutoSize = true;
@@ -312,16 +463,19 @@ internal sealed class MainForm : Form
 
     private Control BuildActionSection()
     {
-        var row = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 5, Margin = new Padding(0, 2, 0, 0) };
+        var row = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 5, Margin = new Padding(16, 2, 16, 2), Padding = new Padding(0, 6, 0, 6) };
         row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         row.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         row.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        _refreshButton.Width = 124;
-        _undoButton.Width = 112;
-        _renameButton.Width = 142;
-        _actionOpenButton.Width = 112;
+        foreach (var button in new[] { _refreshButton, _undoButton, _renameButton, _actionOpenButton })
+        {
+            button.AutoSize = false;
+            button.Anchor = AnchorStyles.Top;
+            button.Margin = new Padding(0, 0, 8, 0);
+        }
+        _actionOpenButton.Margin = new Padding(0);
         _refreshButton.ApplySecondary();
         _actionOpenButton.ApplySecondary();
         _renameButton.ApplyPrimary();
@@ -343,6 +497,14 @@ internal sealed class MainForm : Form
         StyleInput(control);
         table.Controls.Add(label, column, row);
         table.Controls.Add(control, column + 1, row);
+    }
+
+    private static void AddInputOnly(TableLayoutPanel table, Control control, int column, int row)
+    {
+        control.Dock = DockStyle.Fill;
+        StyleInput(control);
+        table.Controls.Add(control, column, row);
+        table.SetColumnSpan(control, 2);
     }
 
     private void LoadSettingsIntoUi()
@@ -386,7 +548,7 @@ internal sealed class MainForm : Form
         _undoButton.Text = T("還原上一次", "Undo last");
         _renameButton.Text = T("開始重新命名", "Rename files");
         _actionOpenButton.Text = T("開啟資料夾", "Open folder");
-        _copyrightLabel.Text = "© 2026 HeroRaye  ·  v1.0.0";
+        _copyrightLabel.Text = "© 2026 HeroRaye  ·  v1.0.1";
 
         SetCategoryText("image", T("圖片", "Images"));
         SetCategoryText("video", T("影片", "Videos"));
@@ -396,6 +558,7 @@ internal sealed class MainForm : Form
         SetTypeText("mp4", "MP4"); SetTypeText("mov", "MOV"); SetTypeText("avi", "AVI");
         SetTypeText("pdf", "PDF"); SetTypeText("word", "Word"); SetTypeText("excel", "Excel"); SetTypeText("ppt", "PowerPoint"); SetTypeText("txt", "TXT");
         SetTypeText("zip", "ZIP"); SetTypeText("rar", "RAR"); SetTypeText("7z", "7Z");
+        ResizeCommandButtons();
         UpdateDateControls();
         if (!_applyingLanguage) RefreshPreview();
     }
@@ -409,6 +572,7 @@ internal sealed class MainForm : Form
         _refreshButton.Click += (_, _) => RefreshPreview();
         _undoButton.Click += (_, _) => UndoLastRename();
         _renameButton.Click += (_, _) => RenameFiles();
+        ResizeEnd += (_, _) => RefreshResponsiveLayout();
 
         _folderText.TextChanged += (_, _) => RefreshPreview();
         _name1Text.TextChanged += (_, _) => RefreshPreview();
@@ -468,16 +632,17 @@ internal sealed class MainForm : Form
 
         _applyingLanguage = true;
         SuspendLayout();
-        _root.SuspendLayout();
+        _contentLayout.SuspendLayout();
         try
         {
             ApplyLanguage();
         }
         finally
         {
-            _root.ResumeLayout(false);
+            _contentLayout.ResumeLayout(false);
             ResumeLayout(false);
             _applyingLanguage = false;
+            RefreshResponsiveLayout();
             RefreshPreview();
             Invalidate(true);
             Update();

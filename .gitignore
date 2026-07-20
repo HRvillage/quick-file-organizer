@@ -28,6 +28,8 @@ Desktop.ini
 .DS_Store
 
 # Logs and temporary files
+TestResults/
+*.pdb
 *.log
 *.tmp
 *.bak
