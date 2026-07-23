@@ -12,11 +12,26 @@ internal sealed class AppSettings
     public string ManualDate { get; set; } = DateTime.Today.ToString("yyyy-MM-dd");
     public string FileDateField { get; set; } = "modified";
     public string DatePosition { get; set; } = "before";
+    public int? FilenameFormat { get; set; }
+    public bool IncludeAllFileTypes { get; set; }
     public int StartNumber { get; set; } = 1;
     public int Digits { get; set; } = 3;
     public bool ContinueLastNumber { get; set; }
     public Dictionary<string, int> LastNumbers { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public List<RenameLogEntry> LastRename { get; set; } = [];
+    public int GroupedGroupSize { get; set; } = 3;
+    public int GroupedSortMode { get; set; } = 2;
+    public string GroupedPrefix { get; set; } = "A";
+    public int GroupedStartNumber { get; set; } = 1;
+    public int GroupedDigits { get; set; } = 3;
+    public string GroupedSeparator { get; set; } = "_";
+    public bool GroupedSameName { get; set; }
+    public string GroupedCommonName { get; set; } = "工地現場";
+    public List<string> GroupedItemNames { get; set; } = ["施工前", "施工中", "施工後"];
+    public string GroupedDateMode { get; set; } = "today";
+    public string GroupedManualDate { get; set; } = DateTime.Today.ToString("yyyy-MM-dd");
+    public string GroupedDatePosition { get; set; } = "middle";
+    public int GroupedTimeWarningMinutes { get; set; } = 5;
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 

@@ -14,7 +14,7 @@ if not exist "%PROJECT%" (
 if exist "%OUTPUT%" rmdir /s /q "%OUTPUT%"
 mkdir "%OUTPUT%"
 
-echo Building Quick File Organizer v1.0.1...
+echo Building Quick File Organizer v1.1.0...
 dotnet publish "%PROJECT%" ^
   -c Release ^
   -r win-x64 ^

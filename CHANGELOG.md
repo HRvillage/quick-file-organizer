@@ -2,6 +2,25 @@
 
 All notable public changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-07-23
+
+### Added
+
+- Added a grouped naming assistant for repeated file sets.
+- Added grouped naming preview with time gap warnings.
+- Added common filename format presets, including formats where the sequence number is attached directly to the name.
+- Added multi-extension confirmation before renaming mixed file batches.
+- Added support for audio formats: MP3, WAV, OGG, WMA, and AAC.
+- Added support for advanced image formats: HEIC, TIFF, and common RAW formats.
+- Added support for design, CAD, and 3D model formats including PSD, AI, INDD, Sketch, FIG, DWG, DWF, DXF, STEP, IGES, STL, and 3DS.
+- Added Any mode for renaming all non-hidden, non-system files when the needed extension is not in the preset list.
+
+### Changed
+
+- Reframed grouped naming as a general file workflow instead of a photo-only workflow.
+- Updated Chinese and English UI text for clearer grouped naming and time gap guidance.
+- Updated project version metadata to v1.1.0.
+
 ## [1.0.1] - 2026-07-20
 
 ### Fixed

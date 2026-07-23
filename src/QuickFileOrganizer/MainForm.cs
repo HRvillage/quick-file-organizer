@@ -8,7 +8,7 @@ internal sealed class MainForm : Form
     private const int TargetClientHeight = 680;
     private const int MinimumClientWidth = 860;
     private const int MinimumClientHeight = 560;
-    private const int FileTypesCardLogicalHeight = 128;
+    private const int FileTypesCardLogicalHeight = 244;
     private static readonly Padding RootPadding = new(16, 10, 16, 8);
 
     private readonly AppSettings _settings;
@@ -32,6 +32,8 @@ internal sealed class MainForm : Form
     private readonly Label _namingTitle = new();
     private readonly Label _typesTitle = new();
     private readonly Label _previewTitle = new();
+    private readonly ModernButton _groupedNamingButton = new();
+    private readonly CheckBox _allFilesCheck = new();
     private readonly TextBox _folderText = new();
     private readonly Label _dragHint = new();
     private readonly FlowLayoutPanel _folderButtons = new();
@@ -74,18 +76,29 @@ internal sealed class MainForm : Form
     {
         ["jpg"] = [".jpg", ".jpeg"], ["png"] = [".png"], ["gif"] = [".gif"],
         ["webp"] = [".webp"], ["bmp"] = [".bmp"],
+        ["heic"] = [".heic", ".heif"], ["tiff"] = [".tif", ".tiff"],
+        ["raw"] = [".raw", ".dng", ".cr2", ".cr3", ".nef", ".arw", ".raf", ".orf", ".rw2", ".pef", ".srw"],
         ["mp4"] = [".mp4"], ["mov"] = [".mov"], ["avi"] = [".avi"],
+        ["mp3"] = [".mp3"], ["wav"] = [".wav"], ["ogg"] = [".ogg"], ["wma"] = [".wma"], ["aac"] = [".aac"],
         ["pdf"] = [".pdf"], ["word"] = [".doc", ".docx"], ["excel"] = [".xls", ".xlsx"],
         ["ppt"] = [".ppt", ".pptx"], ["txt"] = [".txt"],
-        ["zip"] = [".zip"], ["rar"] = [".rar"], ["7z"] = [".7z"]
+        ["zip"] = [".zip"], ["rar"] = [".rar"], ["7z"] = [".7z"],
+        ["psd"] = [".psd"], ["ai"] = [".ai"], ["indd"] = [".indd"], ["sketch"] = [".sketch"], ["fig"] = [".fig"],
+        ["dwg"] = [".dwg"], ["dwf"] = [".dwf"], ["dxf"] = [".dxf"],
+        ["step"] = [".step", ".stp"], ["iges"] = [".iges", ".igs"], ["stl"] = [".stl"], ["3ds"] = [".3ds"]
     };
 
     private static readonly Dictionary<string, string[]> CategoryMembers = new(StringComparer.OrdinalIgnoreCase)
     {
         ["image"] = ["jpg", "png", "gif", "webp", "bmp"],
+        ["advancedImage"] = ["heic", "tiff", "raw"],
         ["video"] = ["mp4", "mov", "avi"],
+        ["audio"] = ["mp3", "wav", "ogg", "wma", "aac"],
         ["document"] = ["pdf", "word", "excel", "ppt", "txt"],
-        ["archive"] = ["zip", "rar", "7z"]
+        ["archive"] = ["zip", "rar", "7z"],
+        ["design"] = ["psd", "ai", "indd", "sketch", "fig"],
+        ["cad"] = ["dwg", "dwf", "dxf"],
+        ["model3d"] = ["step", "iges", "stl", "3ds"]
     };
 
     public MainForm()
@@ -212,6 +225,7 @@ internal sealed class MainForm : Form
         SizeButtonToText(_browseButton, 98);
         SizeButtonToText(_folderOpenButton, 82);
         _folderButtons.PerformLayout();
+        SizeButtonToText(_groupedNamingButton, 118);
         SizeButtonToText(_refreshButton, 124);
         SizeButtonToText(_undoButton, 112);
         SizeButtonToText(_renameButton, 142);
@@ -358,8 +372,16 @@ internal sealed class MainForm : Form
         var outer = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 2 };
         outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        var titleRow = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 2, Margin = new Padding(0, 0, 0, 6) };
+        titleRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        titleRow.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         ConfigureSectionTitle(_namingTitle);
-        outer.Controls.Add(_namingTitle, 0, 0);
+        _namingTitle.Margin = new Padding(0);
+        _groupedNamingButton.ApplySecondary();
+        _groupedNamingButton.Margin = new Padding(8, 0, 0, 0);
+        titleRow.Controls.Add(_namingTitle, 0, 0);
+        titleRow.Controls.Add(_groupedNamingButton, 1, 0);
+        outer.Controls.Add(titleRow, 0, 0);
         var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 4, RowCount = 5, Margin = new Padding(0) };
         table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
@@ -401,21 +423,36 @@ internal sealed class MainForm : Form
     {
         ConfigureFixedCard(_typesCard, new Padding(12, 8, 12, 8), new Padding(0, 0, 0, 6));
         UpdateFileTypesCardHeight();
-        var outer = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 2 };
+        var outer = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, RowCount = 3 };
+        outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         outer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         ConfigureSectionTitle(_typesTitle);
         outer.Controls.Add(_typesTitle, 0, 0);
-        var stack = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 2, RowCount = 2, Margin = new Padding(0) };
+        _allFilesCheck.AutoSize = true;
+        _allFilesCheck.FlatStyle = FlatStyle.Flat;
+        _allFilesCheck.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        _allFilesCheck.ForeColor = TextPrimary;
+        _allFilesCheck.Margin = new Padding(0, 0, 0, 4);
+        outer.Controls.Add(_allFilesCheck, 0, 1);
+        var stack = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 2, RowCount = 5, Margin = new Padding(0) };
         stack.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         stack.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        stack.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        stack.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        stack.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         stack.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         stack.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         AddCategoryRow(stack, 0, 0, "image", ["jpg", "png", "gif", "webp", "bmp"]);
         AddCategoryRow(stack, 1, 0, "video", ["mp4", "mov", "avi"]);
         AddCategoryRow(stack, 0, 1, "document", ["pdf", "word", "excel", "ppt", "txt"]);
         AddCategoryRow(stack, 1, 1, "archive", ["zip", "rar", "7z"]);
-        outer.Controls.Add(stack, 0, 1);
+        AddCategoryRow(stack, 0, 2, "audio", ["mp3", "wav", "ogg", "wma", "aac"]);
+        AddCategoryRow(stack, 1, 2, "advancedImage", ["heic", "tiff", "raw"]);
+        AddCategoryRow(stack, 0, 3, "design", ["psd", "ai", "indd", "sketch", "fig"]);
+        AddCategoryRow(stack, 1, 3, "cad", ["dwg", "dwf", "dxf"]);
+        AddCategoryRow(stack, 0, 4, "model3d", ["step", "iges", "stl", "3ds"]);
+        outer.Controls.Add(stack, 0, 2);
         _typesCard.Controls.Add(outer);
     }
 
@@ -516,48 +553,62 @@ internal sealed class MainForm : Form
         _digitsCombo.Items.AddRange(["2", "3", "4", "5", "6"]);
         _digitsCombo.SelectedIndex = Math.Clamp(_settings.Digits - 2, 0, 4);
         _continueCheck.Checked = _settings.ContinueLastNumber;
+        _allFilesCheck.Checked = _settings.IncludeAllFileTypes;
+        UpdateFileTypeControlsEnabled();
         if (DateTime.TryParse(_settings.ManualDate, out var date)) _manualDatePicker.Value = date;
         _languageToggle.SetLanguage(_english);
     }
 
     private void ApplyLanguage()
     {
-        Text = _english ? "Quick File Organizer" : "檔案整理工具｜Quick File Organizer";
-        _titleLabel.Text = _english ? "Quick File Organizer" : "檔案整理工具";
-        _subtitleLabel.Text = _english ? "Fast, safe batch renaming for everyday files" : "Quick File Organizer · 快速、安全的批次檔案命名";
+        Text = _english ? "Quick File Organizer" : "檔案快速整理器｜Quick File Organizer";
+        _titleLabel.Text = _english ? "Quick File Organizer" : "檔案快速整理器";
+        _subtitleLabel.Text = _english ? "Fast, safe batch renaming for everyday files" : "Quick File Organizer，快速、安全地整理日常檔案名稱";
         _languageToggle.SetLanguage(_english);
-        _folderTitle.Text = T("檔案位置", "Folder");
+        _folderTitle.Text = T("資料夾位置", "Folder");
         _namingTitle.Text = T("命名設定", "Naming");
         _typesTitle.Text = T("檔案類型", "File types");
         _previewTitle.Text = T("即時預覽", "Live preview");
         _folderText.PlaceholderText = T("請選擇要重新命名的資料夾", "Choose a folder to rename");
         _browseButton.Text = T("選擇資料夾", "Browse");
         _folderOpenButton.Text = T("開啟", "Open");
+        _groupedNamingButton.Text = T("分組命名...", "Grouped naming...");
         _dragHint.Text = T("提示：也可以直接把一個資料夾拖曳到此視窗。", "Tip: drag one folder anywhere onto this window.");
         _name1Label.Text = T("名稱 1", "Name 1");
         _name2Label.Text = T("名稱 2", "Name 2");
         _dateSourceLabel.Text = T("日期來源", "Date source");
-        ReplaceItems(_dateModeCombo, [T("不加入日期", "No date"), T("今日日期", "Today"), T("手動輸入", "Manual"), T("依檔案時間", "File date")], DateModeIndex(_settings.DateMode));
+        ReplaceItems(_dateModeCombo, [T("不加入日期", "No date"), T("今天日期", "Today"), T("手動輸入", "Manual"), T("檔案日期", "File date")], DateModeIndex(_settings.DateMode));
         ReplaceItems(_fileDateCombo, [T("修改時間", "Modified date"), T("建立時間", "Created date")], _settings.FileDateField == "created" ? 1 : 0);
-        _datePositionLabel.Text = T("日期位置", "Date position");
-        ReplaceItems(_datePositionCombo, [T("名稱之前", "Before names"), T("名稱之後", "After names")], _settings.DatePosition == "after" ? 1 : 0);
+        _datePositionLabel.Text = T("檔名格式", "Filename format");
+        ReplaceItems(_datePositionCombo, FilenameFormatItems(), InitialFilenameFormat());
         _startLabel.Text = T("起始號碼", "Start number");
         _digitsLabel.Text = T("流水號位數", "Digits");
-        _continueCheck.Text = T("延續相同命名組合的下一個號碼", "Continue the same naming sequence");
+        _continueCheck.Text = T("接續相同命名設定的上一個號碼", "Continue the same naming sequence");
         _refreshButton.Text = T("重新整理預覽", "Refresh preview");
         _undoButton.Text = T("還原上一次", "Undo last");
         _renameButton.Text = T("開始重新命名", "Rename files");
         _actionOpenButton.Text = T("開啟資料夾", "Open folder");
-        _copyrightLabel.Text = "© 2026 HeroRaye  ·  v1.0.1";
+        _copyrightLabel.Text = "© 2026 HeroRaye  ·  v1.1.0";
 
         SetCategoryText("image", T("圖片", "Images"));
+        SetCategoryText("advancedImage", T("進階圖片", "Advanced images"));
         SetCategoryText("video", T("影片", "Videos"));
+        SetCategoryText("audio", T("音訊", "Audio"));
         SetCategoryText("document", T("文件", "Documents"));
         SetCategoryText("archive", T("壓縮檔", "Archives"));
+        SetCategoryText("design", T("設計檔", "Design files"));
+        SetCategoryText("cad", T("CAD 圖面", "CAD drawings"));
+        SetCategoryText("model3d", T("3D 模型", "3D models"));
+        _allFilesCheck.Text = T("Any：包含資料夾內所有檔案", "Any: include all files in the folder");
         SetTypeText("jpg", "JPG/JPEG"); SetTypeText("png", "PNG"); SetTypeText("gif", "GIF"); SetTypeText("webp", "WEBP"); SetTypeText("bmp", "BMP");
+        SetTypeText("heic", "HEIC"); SetTypeText("tiff", "TIFF"); SetTypeText("raw", "RAW");
         SetTypeText("mp4", "MP4"); SetTypeText("mov", "MOV"); SetTypeText("avi", "AVI");
+        SetTypeText("mp3", "MP3"); SetTypeText("wav", "WAV"); SetTypeText("ogg", "OGG"); SetTypeText("wma", "WMA"); SetTypeText("aac", "AAC");
         SetTypeText("pdf", "PDF"); SetTypeText("word", "Word"); SetTypeText("excel", "Excel"); SetTypeText("ppt", "PowerPoint"); SetTypeText("txt", "TXT");
         SetTypeText("zip", "ZIP"); SetTypeText("rar", "RAR"); SetTypeText("7z", "7Z");
+        SetTypeText("psd", "PSD"); SetTypeText("ai", "AI"); SetTypeText("indd", "INDD"); SetTypeText("sketch", "Sketch"); SetTypeText("fig", "FIG");
+        SetTypeText("dwg", "DWG"); SetTypeText("dwf", "DWF"); SetTypeText("dxf", "DXF");
+        SetTypeText("step", "STEP"); SetTypeText("iges", "IGES"); SetTypeText("stl", "STL"); SetTypeText("3ds", "3DS");
         ResizeCommandButtons();
         UpdateDateControls();
         if (!_applyingLanguage) RefreshPreview();
@@ -568,6 +619,7 @@ internal sealed class MainForm : Form
         _languageToggle.LanguageChanged += (_, _) => ToggleLanguage();
         _browseButton.Click += (_, _) => SelectFolder();
         _folderOpenButton.Click += (_, _) => OpenCurrentFolder();
+        _groupedNamingButton.Click += (_, _) => OpenGroupedNaming();
         _actionOpenButton.Click += (_, _) => OpenCurrentFolder();
         _refreshButton.Click += (_, _) => RefreshPreview();
         _undoButton.Click += (_, _) => UndoLastRename();
@@ -584,6 +636,7 @@ internal sealed class MainForm : Form
         _startNumber.ValueChanged += (_, _) => RefreshPreview();
         _digitsCombo.SelectedIndexChanged += (_, _) => { if (!_applyingLanguage) RefreshPreview(); };
         _continueCheck.CheckedChanged += (_, _) => RefreshPreview();
+        _allFilesCheck.CheckedChanged += AllFilesCheckChanged;
 
         DragEnter += (_, e) =>
         {
@@ -613,13 +666,44 @@ internal sealed class MainForm : Form
     {
         if (_updatingChecks) return;
         _updatingChecks = true;
+        UpdateCategoryStates();
+        _updatingChecks = false;
+        RefreshPreview();
+    }
+
+    private void AllFilesCheckChanged(object? sender, EventArgs e)
+    {
+        if (_updatingChecks) return;
+        if (_allFilesCheck.Checked)
+        {
+            string message = T("Any 會忽略下方檔案類型清單，將資料夾內所有非隱藏、非系統檔案都納入重新命名。\n\n這個功能適合用在你要處理的副檔名不在預設清單時。請確認資料夾內沒有不想重新命名的檔案。", "Any ignores the file type list below and includes every non-hidden, non-system file in the folder.\n\nUse this when the extension you need is not in the preset list. Make sure the folder does not contain files you do not want to rename.");
+            if (MessageBox.Show(this, message, T("確認包含所有檔案", "Confirm include all files"), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+            {
+                _updatingChecks = true;
+                _allFilesCheck.Checked = false;
+                _updatingChecks = false;
+                return;
+            }
+        }
+        _settings.IncludeAllFileTypes = _allFilesCheck.Checked;
+        UpdateFileTypeControlsEnabled();
+        RefreshPreview();
+    }
+
+    private void UpdateFileTypeControlsEnabled()
+    {
+        bool enabled = !_allFilesCheck.Checked;
+        foreach (var check in _typeChecks.Values) check.Enabled = enabled;
+        foreach (var check in _categoryChecks.Values) check.Enabled = enabled;
+    }
+
+    private void UpdateCategoryStates()
+    {
         foreach (var category in CategoryMembers)
         {
             int selected = category.Value.Count(x => _typeChecks[x].Checked);
             _categoryChecks[category.Key].CheckState = selected == 0 ? CheckState.Unchecked : selected == category.Value.Length ? CheckState.Checked : CheckState.Indeterminate;
         }
-        _updatingChecks = false;
-        RefreshPreview();
     }
 
     private void ToggleLanguage()
@@ -660,12 +744,22 @@ internal sealed class MainForm : Form
 
     private static int DateModeIndex(string mode) => mode == "none" ? 0 : mode == "manual" ? 2 : mode == "file" ? 3 : 1;
     private string CurrentDateMode() => _dateModeCombo.SelectedIndex == 0 ? "none" : _dateModeCombo.SelectedIndex == 2 ? "manual" : _dateModeCombo.SelectedIndex == 3 ? "file" : "today";
+    private int InitialFilenameFormat() => Math.Clamp(_settings.FilenameFormat ?? (_settings.DatePosition == "after" ? 1 : 0), 0, 5);
+    private string[] FilenameFormatItems() =>
+    [
+        T("名稱1_名稱2_日期_流水號", "Name1_Name2_Date_Number"),
+        T("名稱1_名稱2_流水號_日期", "Name1_Name2_Number_Date"),
+        T("名稱1_名稱2流水號_日期", "Name1_Name2Number_Date"),
+        T("日期_名稱1_名稱2_流水號", "Date_Name1_Name2_Number"),
+        T("日期_名稱1_名稱2流水號", "Date_Name1_Name2Number"),
+        T("流水號_名稱1_名稱2_日期", "Number_Name1_Name2_Date")
+    ];
 
     private void UpdateDateControls()
     {
         _manualDatePicker.Visible = CurrentDateMode() == "manual";
         _fileDateCombo.Visible = CurrentDateMode() == "file";
-        _datePositionCombo.Enabled = CurrentDateMode() != "none";
+        _datePositionCombo.Enabled = true;
     }
 
     private void SelectFolder()
@@ -679,6 +773,26 @@ internal sealed class MainForm : Form
         string folder = _folderText.Text.Trim();
         if (!Directory.Exists(folder)) { ShowInfo(T("請先選擇有效的資料夾。", "Choose a valid folder first.")); return; }
         Process.Start(new ProcessStartInfo("explorer.exe", $"\"{folder}\"") { UseShellExecute = true });
+    }
+
+    private void OpenGroupedNaming()
+    {
+        RefreshPreview();
+        string folder = _folderText.Text.Trim();
+        if (!Directory.Exists(folder)) { ShowInfo(T("請先選擇有效的資料夾。", "Choose a valid folder first.")); return; }
+        if (_currentFiles.Count == 0) { ShowInfo(T("目前沒有符合條件的檔案，請先勾選檔案類型。", "No matching files. Select at least one file type first.")); return; }
+        using var dialog = new GroupedNamingDialog(_currentFiles, folder, _settings, _english, BuildGroupedFilterSummary());
+        if (dialog.ShowDialog(this) != DialogResult.OK) return;
+        _settings.Save();
+        ExecuteGroupedRename(dialog.Preview);
+    }
+
+    private string BuildGroupedFilterSummary()
+    {
+        var extensions = _currentFiles.Select(x => x.Extension.ToUpperInvariant()).Where(x => x.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
+        string extText = extensions.Count == 0 ? T("無副檔名", "No extension") : string.Join(_english ? ", " : "、", extensions);
+        string scope = _allFilesCheck.Checked ? T("Any 模式", "Any mode") : T("主畫面目前篩選結果", "current main-screen filter");
+        return T($"使用{scope}：共 {_currentFiles.Count} 個檔案，副檔名：{extText}", $"Using {scope}: {_currentFiles.Count} files, extensions: {extText}");
     }
 
     private void RefreshPreview()
@@ -707,9 +821,21 @@ internal sealed class MainForm : Form
     {
         string folder = _folderText.Text.Trim();
         if (!Directory.Exists(folder)) return [];
+        if (_allFilesCheck.Checked)
+        {
+            try
+            {
+                return new DirectoryInfo(folder).EnumerateFiles("*", SearchOption.TopDirectoryOnly)
+                    .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden) && !f.Attributes.HasFlag(FileAttributes.System))
+                    .OrderBy(f => f.CreationTimeUtc).ThenBy(f => f.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            }
+            catch { return []; }
+        }
         var extensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var pair in _typeChecks.Where(x => x.Value.Checked))
+        {
             foreach (string ext in FileTypeGroups[pair.Key]) extensions.Add(ext);
+        }
         if (extensions.Count == 0) return [];
         try
         {
@@ -730,7 +856,7 @@ internal sealed class MainForm : Form
 
     private string BuildSequenceKey()
     {
-        return $"{SanitizePart(_name1Text.Text).ToLowerInvariant()}|{SanitizePart(_name2Text.Text).ToLowerInvariant()}|{CurrentDateMode()}|{(_datePositionCombo.SelectedIndex == 1 ? "after" : "before")}";
+        return $"{SanitizePart(_name1Text.Text).ToLowerInvariant()}|{SanitizePart(_name2Text.Text).ToLowerInvariant()}|{CurrentDateMode()}|{CurrentFilenameFormat()}";
     }
 
     private void UpdateContinueHint()
@@ -748,12 +874,27 @@ internal sealed class MainForm : Form
         if (n1.Length > 0) names.Add(n1); if (n2.Length > 0) names.Add(n2);
         string date = ResolveDate(file).ToString("yyyyMMdd");
         bool includeDate = CurrentDateMode() != "none";
-        var parts = new List<string>();
-        if (includeDate && _datePositionCombo.SelectedIndex == 0) parts.Add(date);
-        parts.AddRange(names);
-        if (includeDate && _datePositionCombo.SelectedIndex == 1) parts.Add(date);
-        parts.Add(FormatNumber(number));
+        string numberText = FormatNumber(number);
+        List<string> parts = CurrentFilenameFormat() switch
+        {
+            1 => [.. names, numberText, includeDate ? date : string.Empty],
+            2 => [.. AppendNumberToLastName(names, numberText), includeDate ? date : string.Empty],
+            3 => [includeDate ? date : string.Empty, .. names, numberText],
+            4 => [includeDate ? date : string.Empty, .. AppendNumberToLastName(names, numberText)],
+            5 => [numberText, .. names, includeDate ? date : string.Empty],
+            _ => [.. names, includeDate ? date : string.Empty, numberText]
+        };
         return string.Join("_", parts.Where(x => !string.IsNullOrWhiteSpace(x))) + extension.ToLowerInvariant();
+    }
+
+    private int CurrentFilenameFormat() => Math.Clamp(_datePositionCombo.SelectedIndex, 0, 5);
+
+    private static List<string> AppendNumberToLastName(List<string> names, string numberText)
+    {
+        var parts = names.ToList();
+        if (parts.Count == 0) parts.Add(numberText);
+        else parts[^1] += numberText;
+        return parts;
     }
 
     private DateTime ResolveDate(FileInfo? file)
@@ -791,13 +932,14 @@ internal sealed class MainForm : Form
             TemporaryPath = Path.Combine(folder, $".__qfo_{Guid.NewGuid():N}{file.Extension}")
         }).ToList();
 
-        if (plan.GroupBy(x => x.FinalPath, StringComparer.OrdinalIgnoreCase).Any(g => g.Count() > 1)) { ShowWarning(T("命名結果發生重複，請調整設定。", "Duplicate target names were generated. Adjust the settings.")); return; }
+        if (plan.GroupBy(x => x.FinalPath, StringComparer.OrdinalIgnoreCase).Any(g => g.Count() > 1)) { ShowWarning(T("\u547d\u540d\u7d50\u679c\u767c\u751f\u91cd\u8907\uff0c\u8acb\u8abf\u6574\u8a2d\u5b9a\u3002", "Duplicate target names were generated. Adjust the settings.")); return; }
         var sources = plan.Select(x => x.SourcePath).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var conflicts = plan.Where(x => File.Exists(x.FinalPath) && !sources.Contains(x.FinalPath)).Take(5).Select(x => Path.GetFileName(x.FinalPath)).ToList();
-        if (conflicts.Count > 0) { ShowWarning(T("已有同名檔案，程式不會覆蓋：\n\n", "Existing files will not be overwritten:\n\n") + string.Join("\n", conflicts)); return; }
+        if (conflicts.Count > 0) { ShowWarning(T("\u5df2\u6709\u540c\u540d\u6a94\u6848\uff0c\u7a0b\u5f0f\u4e0d\u6703\u8986\u84cb\uff1a\n\n", "Existing files will not be overwritten:\n\n") + string.Join("\n", conflicts)); return; }
+        if (!ConfirmMultipleFileTypes(_currentFiles)) return;
 
-        string confirm = T($"即將重新命名 {plan.Count} 個檔案。\n\n第一筆：{Path.GetFileName(plan[0].FinalPath)}\n最後一筆：{Path.GetFileName(plan[^1].FinalPath)}\n\n確定繼續嗎？", $"Rename {plan.Count} files?\n\nFirst: {Path.GetFileName(plan[0].FinalPath)}\nLast: {Path.GetFileName(plan[^1].FinalPath)}");
-        if (MessageBox.Show(this, confirm, T("確認重新命名", "Confirm rename"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return;
+        string confirm = T($"\u5373\u5c07\u91cd\u65b0\u547d\u540d {plan.Count} \u500b\u6a94\u6848\u3002\n\n\u7b2c\u4e00\u7b46\u7bc4\u4f8b\uff1a{Path.GetFileName(plan[0].FinalPath)}\n\u6700\u5f8c\u4e00\u7b46\u7bc4\u4f8b\uff1a{Path.GetFileName(plan[^1].FinalPath)}\n\n\u78ba\u5b9a\u7e7c\u7e8c\u55ce\uff1f", $"Rename {plan.Count} files?\n\nFirst: {Path.GetFileName(plan[0].FinalPath)}\nLast: {Path.GetFileName(plan[^1].FinalPath)}");
+        if (MessageBox.Show(this, confirm, T("\u78ba\u8a8d\u91cd\u65b0\u547d\u540d", "Confirm rename"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return;
 
         var temp = new List<RenamePlan>(); var done = new List<RenamePlan>();
         try
@@ -807,15 +949,66 @@ internal sealed class MainForm : Form
             _settings.LastRename = plan.Select(x => new RenameLogEntry { OldPath = x.SourcePath, NewPath = x.FinalPath }).ToList();
             _settings.LastNumbers[BuildSequenceKey()] = start + plan.Count - 1;
             SaveUiSettings(); RefreshPreview();
-            var result = MessageBox.Show(this, T($"已成功重新命名 {plan.Count} 個檔案。\n最後流水號：{FormatNumber(start + plan.Count - 1)}\n\n是否開啟資料夾？", $"Renamed {plan.Count} files.\nLast sequence: {FormatNumber(start + plan.Count - 1)}\n\nOpen the folder?"), T("重新命名完成", "Rename complete"), MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            var result = MessageBox.Show(this, T($"\u5df2\u6210\u529f\u91cd\u65b0\u547d\u540d {plan.Count} \u500b\u6a94\u6848\u3002\n\u6700\u5f8c\u6d41\u6c34\u865f\uff1a{FormatNumber(start + plan.Count - 1)}\n\n\u662f\u5426\u958b\u555f\u8cc7\u6599\u593e\uff1f", $"Renamed {plan.Count} files.\nLast sequence: {FormatNumber(start + plan.Count - 1)}\n\nOpen the folder?"), T("\u91cd\u65b0\u547d\u540d\u5b8c\u6210", "Rename complete"), MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (result == DialogResult.Yes) OpenCurrentFolder();
         }
         catch (Exception ex)
         {
             RollbackRename(done, temp);
-            MessageBox.Show(this, T("重新命名未完成，程式已嘗試恢復原始檔名。\n\n", "Rename failed. The app attempted to restore the original names.\n\n") + ex.Message, T("執行失敗", "Operation failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, T("\u91cd\u65b0\u547d\u540d\u672a\u5b8c\u6210\uff0c\u7a0b\u5f0f\u5df2\u5617\u8a66\u6062\u5fa9\u539f\u59cb\u6a94\u540d\u3002\n\n", "Rename failed. The app attempted to restore the original names.\n\n") + ex.Message, T("\u57f7\u884c\u5931\u6557", "Operation failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             RefreshPreview();
         }
+    }
+
+    private void ExecuteGroupedRename(GroupedNamingPreview preview)
+    {
+        if (!preview.CanRename) return;
+        var plan = preview.Items.Select(item => new RenamePlan
+        {
+            SourcePath = item.SourceFile.FullName,
+            FinalPath = item.FinalPath,
+            TemporaryPath = Path.Combine(Path.GetDirectoryName(item.SourceFile.FullName)!, $".__qfo_{Guid.NewGuid():N}{item.SourceFile.Extension}")
+        }).ToList();
+
+        if (plan.GroupBy(x => x.FinalPath, StringComparer.OrdinalIgnoreCase).Any(g => g.Count() > 1)) { ShowWarning(T("\u547d\u540d\u7d50\u679c\u767c\u751f\u91cd\u8907\uff0c\u8acb\u8abf\u6574\u8a2d\u5b9a\u3002", "Duplicate target names were generated. Adjust the settings.")); return; }
+        var sources = plan.Select(x => x.SourcePath).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var conflicts = plan.Where(x => File.Exists(x.FinalPath) && !sources.Contains(x.FinalPath)).Take(5).Select(x => Path.GetFileName(x.FinalPath)).ToList();
+        if (conflicts.Count > 0) { ShowWarning(T("\u5df2\u6709\u540c\u540d\u6a94\u6848\uff0c\u7a0b\u5f0f\u4e0d\u6703\u8986\u84cb\uff1a\n\n", "Existing files will not be overwritten:\n\n") + string.Join("\n", conflicts)); return; }
+        if (!ConfirmMultipleFileTypes(preview.Items.Select(x => x.SourceFile))) return;
+
+        if (preview.WarningCount > 0)
+        {
+            string text = T($"\u5206\u7d44\u9810\u89bd\u4e2d\u6709 {preview.WarningCount} \u500b\u6642\u9593\u9593\u9694\u63d0\u9192\u3002\n\n\u9019\u901a\u5e38\u4ee3\u8868\u53ef\u80fd\u6709\u6f0f\u62cd\u3001\u63d2\u5165\u7121\u95dc\u6a94\u6848\uff0c\u6216\u6392\u5e8f\u65b9\u5f0f\u4e0d\u9069\u5408\u76ee\u524d\u6a94\u6848\u3002\u8acb\u78ba\u8a8d\u9810\u89bd\u4e2d\u7684\u63d0\u9192\u5217\u518d\u7e7c\u7e8c\u3002", $"The preview has {preview.WarningCount} time gap warning(s).\n\nThis may mean a missing file, an unrelated file in the folder, or the wrong sort order. Review the highlighted rows before continuing.");
+            if (MessageBox.Show(this, text, T("\u78ba\u8a8d\u6642\u9593\u63d0\u9192", "Confirm time warnings"), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return;
+        }
+
+        string confirm = T($"\u5373\u5c07\u4f7f\u7528\u5206\u7d44\u547d\u540d\u91cd\u65b0\u547d\u540d {plan.Count} \u500b\u6a94\u6848\u3002\n\n\u7b2c\u4e00\u7b46\uff1a{Path.GetFileName(plan[0].FinalPath)}\n\u6700\u5f8c\u4e00\u7b46\uff1a{Path.GetFileName(plan[^1].FinalPath)}\n\n\u78ba\u5b9a\u7e7c\u7e8c\u55ce\uff1f", $"Rename {plan.Count} files with grouped naming?\n\nFirst: {Path.GetFileName(plan[0].FinalPath)}\nLast: {Path.GetFileName(plan[^1].FinalPath)}");
+        if (MessageBox.Show(this, confirm, T("\u78ba\u8a8d\u5206\u7d44\u547d\u540d", "Confirm grouped rename"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return;
+
+        var temp = new List<RenamePlan>(); var done = new List<RenamePlan>();
+        try
+        {
+            foreach (var item in plan) { File.Move(item.SourcePath, item.TemporaryPath); temp.Add(item); }
+            foreach (var item in plan) { File.Move(item.TemporaryPath, item.FinalPath); done.Add(item); }
+            _settings.LastRename = plan.Select(x => new RenameLogEntry { OldPath = x.SourcePath, NewPath = x.FinalPath }).ToList();
+            _settings.Save(); RefreshPreview();
+            var result = MessageBox.Show(this, T($"\u5df2\u6210\u529f\u91cd\u65b0\u547d\u540d {plan.Count} \u500b\u6a94\u6848\u3002\n\n\u662f\u5426\u958b\u555f\u8cc7\u6599\u593e\uff1f", $"Renamed {plan.Count} files.\n\nOpen the folder?"), T("\u91cd\u65b0\u547d\u540d\u5b8c\u6210", "Rename complete"), MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if (result == DialogResult.Yes) OpenCurrentFolder();
+        }
+        catch (Exception ex)
+        {
+            RollbackRename(done, temp);
+            MessageBox.Show(this, T("\u91cd\u65b0\u547d\u540d\u672a\u5b8c\u6210\uff0c\u7a0b\u5f0f\u5df2\u5617\u8a66\u6062\u5fa9\u539f\u59cb\u6a94\u540d\u3002\n\n", "Rename failed. The app attempted to restore the original names.\n\n") + ex.Message, T("\u57f7\u884c\u5931\u6557", "Operation failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            RefreshPreview();
+        }
+    }
+
+    private bool ConfirmMultipleFileTypes(IEnumerable<FileInfo> files)
+    {
+        var extensions = files.Select(x => string.IsNullOrWhiteSpace(x.Extension) ? T("\u7121\u526f\u6a94\u540d", "No extension") : x.Extension.ToUpperInvariant()).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
+        if (extensions.Count <= 1) return true;
+        string text = T($"\u9019\u6b21\u5305\u542b {extensions.Count} \u7a2e\u526f\u6a94\u540d\uff1a{string.Join("\u3001", extensions)}\n\n\u8acb\u78ba\u8a8d\u9019\u4e9b\u6a94\u6848\u53ef\u4ee5\u4e00\u8d77\u4f7f\u7528\u76f8\u540c\u547d\u540d\u898f\u5247\u3002", $"This batch includes {extensions.Count} file types: {string.Join(", ", extensions)}\n\nMake sure these files should use the same naming rule.");
+        return MessageBox.Show(this, text, T("\u78ba\u8a8d\u6a94\u6848\u985e\u578b", "Confirm file types"), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
     }
 
     private static void RollbackRename(List<RenamePlan> completed, List<RenamePlan> movedToTemp)
@@ -854,7 +1047,9 @@ internal sealed class MainForm : Form
         _settings.DateMode = CurrentDateMode();
         _settings.ManualDate = _manualDatePicker.Value.ToString("yyyy-MM-dd");
         _settings.FileDateField = _fileDateCombo.SelectedIndex == 1 ? "created" : "modified";
-        _settings.DatePosition = _datePositionCombo.SelectedIndex == 1 ? "after" : "before";
+        _settings.FilenameFormat = CurrentFilenameFormat();
+        _settings.DatePosition = CurrentFilenameFormat() is 3 or 4 ? "before" : "after";
+        _settings.IncludeAllFileTypes = _allFilesCheck.Checked;
         _settings.StartNumber = (int)_startNumber.Value;
         _settings.Digits = _digitsCombo.SelectedIndex >= 0 ? _digitsCombo.SelectedIndex + 2 : 3;
         _settings.ContinueLastNumber = _continueCheck.Checked;

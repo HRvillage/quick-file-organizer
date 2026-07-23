@@ -4,7 +4,7 @@
 
 <p align="center">
   <strong>A lightweight, portable batch file renaming utility for Windows.</strong><br>
-  Custom names, date sources, sequence numbering, grouped file types, preview, and one-step undo.
+  Flexible filename formats, grouped naming, broad file type support, preview, and one-step undo.
 </p>
 
 <p align="center">
@@ -16,7 +16,9 @@
 
 ## Overview
 
-Quick File Organizer helps rename groups of files with a consistent naming pattern while keeping the workflow clear and approachable. It is designed as a portable Windows utility: download the self-contained package, extract it, and run the executable without installing a separate .NET runtime.
+Quick File Organizer helps rename everyday work files with consistent naming patterns while keeping the workflow clear and approachable. It works well for site photos, claims records, real estate files, product images, design assets, generated images, scanned documents, and other repeatable file sets.
+
+It is designed as a portable Windows utility: download the self-contained package, extract it, and run the executable without installing a separate .NET runtime.
 
 The app includes a resizable, DPI-aware Windows interface with maximize support, vertical scrolling as a fallback on limited screen space, and a custom Windows application icon.
 
@@ -24,11 +26,16 @@ The app includes a resizable, DPI-aware Windows interface with maximize support,
 
 - Batch rename files from a selected folder
 - Combine Name 1, Name 2, date, and sequence number
+- Choose from common filename formats, including formats where the sequence number is attached directly to the name
 - Date options: today, manual date, created time, or modified time
 - Sort files by file time before numbering
 - Continue numbering from the previous matching name combination
-- Grouped file type selection for images, videos, documents, and archives
-- Supported video formats include MP4, MOV, and AVI
+- Grouped naming assistant for repeated file sets
+- Time gap warnings for grouped naming previews
+- File type selection for images, advanced images, videos, audio, documents, archives, design files, CAD drawings, and 3D models
+- Supported formats include JPG, PNG, HEIC, TIFF, RAW, MP4, MOV, MP3, WAV, PDF, Office files, ZIP, PSD, AI, INDD, DWG, DXF, STEP, STL, and more
+- Any mode for including all non-hidden, non-system files when the extension is not in the preset list
+- Confirmation warning when a batch includes multiple file extensions
 - Live single-line preview before renaming
 - One-step undo for the most recent rename operation
 - Folder drag-and-drop
@@ -59,9 +66,9 @@ No installation or separate .NET runtime is required.
 
 1. Select or drag a folder into the window.
 2. Enter optional values for Name 1 and Name 2.
-3. Choose the date source, date position, starting number, and number of digits.
-4. Select one or more file types, or select an entire category.
-5. Confirm the preview and choose **Start Rename**.
+3. Choose the date source, filename format, starting number, and number of digits.
+4. Select one or more file types, select an entire category, or use Any mode when the extension is not listed.
+5. Confirm the preview and choose **Rename files**.
 6. Use **Undo Last** if the most recent operation needs to be reverted.
 
 See the full [English user guide](docs/en/UserGuide.md) or [Traditional Chinese user guide](docs/zh-TW/UserGuide.md).
