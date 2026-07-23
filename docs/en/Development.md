@@ -2,49 +2,47 @@
 
 ## Project Origin
 
-Quick File Organizer began with a common but repetitive task: renaming groups of images, videos, and documents according to a consistent rule. Windows File Explorer works well for small edits, but manual work becomes error-prone when filenames require dates, multiple custom name segments, sequential numbering, or time-based ordering.
+Quick File Organizer began with a common but repetitive task: renaming large sets of photos, documents, design assets, or other work files according to consistent rules. Windows File Explorer works well for small edits, but manual work becomes error-prone when filenames require dates, custom name segments, sequence numbers, file timestamps, or grouped patterns.
 
-The project was therefore shaped around four goals: speed, clarity, portability, and safe recovery. It is intentionally a focused utility rather than a large file management suite.
+The project is therefore built around four goals: speed, clarity, safety, and portability. It is intentionally a focused batch naming utility rather than a large file management suite.
 
 ## Design Principles
 
-### Complete the task on one screen
+### Keep the workflow low-friction
 
-The primary workflow stays in a single window without nested menus or tabs. The public version uses a fixed compact layout so all controls and action buttons remain visible together.
+The primary workflow stays in one window so users can choose a folder, configure naming rules, select file types, review the preview, and rename files without moving through complex screens.
 
-### Prefer clarity over configuration depth
+### Make naming rules understandable
 
-The filename is built from four practical elements: Name 1, Name 2, date, and sequence number. Empty elements are skipped automatically, avoiding the need for a separate template manager.
+The standard workflow is based on practical filename elements: names, dates, and sequence numbers. Common filename format presets are provided so users do not need to learn a complex template language.
 
-### Reduce accidental operations
+### Reduce bulk operation risk
 
-File types start unselected on every launch. The interface provides a live preview, checks target-name conflicts before processing, and stores one undo record after a successful operation.
+The application provides previews, target-name conflict checks, mixed-extension confirmation, Any mode confirmation, temporary two-phase renaming, and one-step undo.
 
-### Portable and local-first
+### Stay local and portable
 
-The application uses a portable distribution and stores preferences beside the executable in the `Data` folder. All file processing remains local and requires no account or online service.
+The application is distributed as a portable Windows tool. Settings and undo records are stored beside the executable in the `Data` folder. All file processing remains local and requires no account or online service.
 
 ## Feature Evolution
 
 ### Initial prototype
 
-The first stage established folder selection, basic custom naming, a date prefix, sequence numbering, and ordering by file creation time.
-
-### Workflow expansion
-
-The tool later gained a second custom name field, configurable date position, manual dates, created or modified file timestamps, continuation numbering, file type filtering, and direct folder opening after completion.
-
-### Safety and accessibility
-
-Preview, conflict detection, temporary two-phase renaming, and one-step undo were introduced to reduce the risk of bulk changes. File formats were grouped as images, videos, documents, and archives so users do not need detailed extension knowledge.
-
-### Interface refinement
-
-The interface moved from default WinForms presentation to a compact card-based layout with clearer button hierarchy, spacing, color, and Chinese/English switching. After testing across display sizes and scaling settings, the release layout was fixed and scrolling was removed to prevent hidden action buttons.
+The first stage established folder selection, basic custom naming, date handling, sequence numbering, and batch renaming sorted by file time.
 
 ### v1.0.0
 
-The first public release was normalized as `v1.0.0`. Before publication, the source was cleaned, project documentation was prepared in both languages, and the portable release and GitHub repository structure were standardized.
+The first public release was normalized as `v1.0.0`. It established the core rename workflow, preview, undo, file type filtering, portable publishing, and GitHub project documentation.
+
+### v1.0.1
+
+This maintenance release focused on Windows desktop compatibility. It improved DPI behavior, laptop layout handling, resizable and maximizable window support, AutoScroll fallback, button text sizing, File Types height, rounded button rendering, and the official Windows app icon.
+
+### v1.1.0
+
+This release added the Grouped Naming Assistant for repeated file sets, such as construction records, insurance claim cases, real estate rooms, product photos, medical records, Airbnb rooms, and other grouped workflows. It supports fixed group sizes, same or different names inside each group, grouped previews, time gap warnings, and grouped date markers.
+
+v1.1.0 also expanded file type support with audio, advanced image, design asset, CAD drawing, and 3D model categories. It introduced Any mode for confirmed renaming of extensions that are not included in the preset list.
 
 ## Technology
 
@@ -52,10 +50,10 @@ The first public release was normalized as `v1.0.0`. Before publication, the sou
 - .NET 8
 - Windows Forms
 - Self-contained single-file publishing
-- Local JSON settings and undo record
+- Local JSON settings and undo records
 
-WinForms was selected for fast startup, direct Windows integration, low dependency overhead, and suitability for a focused desktop utility.
+WinForms was selected for fast startup, direct Windows integration, low dependency overhead, and suitability for a lightweight focused desktop utility.
 
 ## Future Direction
 
-Future releases will prioritize compatibility fixes and practical improvements discovered through real use. New features will be considered only when they preserve the application's compact, single-screen workflow.
+Future releases will prioritize compatibility, naming flexibility, and safety improvements discovered through real use. New features will be considered when they preserve the application's low-friction workflow and avoid unnecessary complexity.

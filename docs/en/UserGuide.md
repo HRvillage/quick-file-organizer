@@ -2,13 +2,13 @@
 
 ## 1. Launch the Application
 
-Extract the portable ZIP and run:
+Run the release executable:
 
 ```text
 QuickFileOrganizer.exe
 ```
 
-The local `Data` folder stores preferences and the most recent rename record. Do not delete it before using Undo.
+The adjacent `Data` folder stores preferences and the most recent rename record. Do not delete it if you still need to use Undo.
 
 ## 2. Select a Folder
 
@@ -17,40 +17,41 @@ Use either method:
 - Select **Choose Folder**.
 - Drag one folder into the application window.
 
-Only files in the selected folder's top level are processed. Subfolders and folder names are not changed.
+Only files in the selected folder's top level are processed. Subfolders and folder names are not renamed.
 
-## 3. Configure the New Filename
+## 3. Configure Standard Naming
 
-### Name 1 and Name 2
+### Names and Dates
 
-Both fields are optional. Empty fields are skipped automatically without producing duplicate separators.
+`Name 1` and `Name 2` are optional. Empty fields are skipped automatically without creating extra separators.
 
-Example:
+Date source options:
+
+- No date
+- Today
+- Manual
+- File date
+
+File date can use either modified time or created time. If files were downloaded, copied, or exported, review the Windows file properties before choosing the time source.
+
+### Filename Format
+
+The filename format dropdown provides common patterns, such as:
 
 ```text
-Name 1: Bandai
-Name 2: OPCG
+Name1_Name2_Date_Number
+Name1_Name2_Number_Date
+Date_Name1_Name2_Number
+Number_Name1_Name2_Date
 ```
 
-### Date Source
-
-- **No date**: do not include a date.
-- **Today**: use the current date.
-- **Manual**: choose a specific date.
-- **File time**: use each file's created or modified timestamp.
-
-For files copied, downloaded, or exported from another device, the meaningful original time may be stored as the modified time. Check the Windows file properties before processing important files.
-
-### Date Position
-
-- **Before names**: `20260717_Bandai_OPCG_001.jpg`
-- **After names**: `Bandai_OPCG_20260717_001.jpg`
+It also includes a name-plus-number format without an underscore between the name and number, which can be useful for products, cases, and repeated field records.
 
 ### Sequence Number
 
-- **Start number** sets the first number used in the current operation.
-- **Digits** controls zero padding, such as `001` for three digits.
-- **Continue matching name combination** resumes from the next number previously stored for the same naming combination.
+- **Start number** sets the first number for the current operation.
+- **Digits** controls zero padding, such as `001`.
+- **Continue matching name combination** resumes from the next stored number for the same naming combination.
 
 ## 4. Select File Types
 
@@ -60,51 +61,67 @@ Available categories:
 - Videos: MP4, MOV, AVI
 - Documents: PDF, Word, Excel, PowerPoint, TXT
 - Archives: ZIP, RAR, 7Z
+- Audio: MP3, WAV, OGG, WMA, AAC
+- Advanced images: HEIC, TIFF, RAW
+- Design assets: PSD, AI, INDD, Sketch, FIG
+- CAD drawings: DWG, DWF, DXF
+- 3D models: STEP, IGES, STL, 3DS
 
-Selecting a category selects all formats in that category. Clearing the category clears all of them. Individual formats can still be selected separately.
+Selecting a category selects all formats in that category. Individual formats can still be selected separately. File type selections reset to off when the application restarts to reduce accidental operations.
 
-File type selections reset to off whenever the application is restarted to reduce accidental operations.
+## 5. Use Any Mode
 
-## 5. Review the Preview
+If the extension you need is not in the preset list, enable **Any: include all files in the folder**.
 
-The preview displays a filename example based on the current settings. After a valid folder and file types are selected, the application also reports matching files.
+Any mode includes all non-hidden, non-system files in the selected folder and ignores the preset file type list. The application shows a confirmation dialog before enabling it. Review the folder contents and preview carefully before renaming.
+
+## 6. Use the Grouped Naming Assistant
+
+Select **Grouped naming...** to open the Grouped Naming Assistant.
+
+Common uses include:
+
+- Construction records: before, during, after
+- Insurance claims: front, rear, left, right
+- Real estate: living room, dining room, kitchen
+- E-commerce products: front, back, side
+- Medical records: before, during, after procedure
+- Airbnb rooms: living room, bedroom, bathroom
+
+Basic steps:
+
+1. Set the number of files per group.
+2. Choose the sort order.
+3. Set the group prefix, start number, digits, and separator.
+4. Choose same name or different names inside each group.
+5. Add a date marker if needed and choose its position.
+6. Review grouped preview and time gap warnings.
+7. Rename after confirming the preview.
+
+Time gap warnings help identify possible missing files, extra files, unexpected files, or sort order issues. They do not automatically fix grouping. Check the folder, remove or add files if needed, and preview again.
+
+## 7. Review and Rename
 
 Before renaming, confirm:
 
 - The selected folder is correct.
-- Name and date order are correct.
-- Start number and digit count are correct.
-- The intended file types are selected.
+- The filename format is correct.
+- Date source and sequence number are correct.
+- File type selection or Any mode matches the intended batch.
+- The preview does not include unexpected files.
 
-## 6. Rename Files
+If the batch contains multiple extensions, the application asks for confirmation before continuing.
 
-Select **Start Rename**. The application checks for naming conflicts before applying changes.
-
-Existing files are never overwritten. If a target filename already exists, the operation stops and reports the conflict.
-
-Use **Open Folder** after completion to review the result.
-
-## 7. Undo the Last Operation
+## 8. Undo the Last Operation
 
 Select **Undo Last** to revert the most recent successful rename operation.
 
 Notes:
 
-- Only the latest operation performed by this application can be undone.
-- Files that were deleted, moved, or renamed again may not be recoverable.
+- Only the latest successful operation can be undone.
+- Files that were moved, deleted, or renamed again may not be recoverable.
 - A new successful rename replaces the previous undo record.
 
-## 8. Change Language
+## 9. Change Language
 
-Use the compact language switch in the upper-right corner to change between Chinese and English. The selected language is saved.
-
-## 9. Move the Portable Application
-
-Copy both:
-
-```text
-QuickFileOrganizer.exe
-Data\
-```
-
-Delete the `Data` folder only when saved preferences and undo history are no longer needed. The application recreates it when required.
+Use the language switch in the upper-right corner to change between Chinese and English. The Grouped Naming Assistant follows the language selected in the main window.

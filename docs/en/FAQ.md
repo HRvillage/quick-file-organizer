@@ -2,7 +2,7 @@
 
 ## Do I need .NET or development tools to run the application?
 
-No. The portable package on GitHub Releases includes the required runtime. End users only need to extract the ZIP and run the executable.
+No. The release executable on GitHub Releases includes the required runtime. End users only need to download and run `QuickFileOrganizer.exe`.
 
 The .NET 8 SDK is required only when building from source.
 
@@ -13,6 +13,12 @@ No. All processing is local. The application requires no account and sends no fi
 ## Why are all file types cleared after every restart?
 
 This is an intentional safety choice that reduces the chance of running a bulk rename against an unintended group of files.
+
+## What is Any mode?
+
+Any mode is for extensions that are not included in the preset list. When enabled, the application includes all non-hidden, non-system files in the selected folder and asks for confirmation before continuing.
+
+Review the folder contents and preview carefully when using Any mode because it does not filter by file type.
 
 ## Are subfolders processed?
 
@@ -28,6 +34,14 @@ Created time often represents when a file entered the current disk or folder and
 
 Review the Windows file properties before choosing the time source for important batches.
 
+## Is the Grouped Naming Assistant only for photos?
+
+No. It can be used with any files included by the current file type selection, or with Any mode for other extensions. It is useful whenever files repeat in fixed-size groups.
+
+## Do time gap warnings automatically fix grouping issues?
+
+No. Time gap warnings only point out where a group may contain missing files, extra files, unrelated files, or unexpected ordering. Check the folder, adjust the files, and preview again.
+
 ## Can Undo restore multiple operations?
 
 No. The application stores only the latest successful rename operation.
@@ -39,8 +53,6 @@ A file that was moved, deleted, or renamed again may not be recoverable. The app
 ## Why might Windows or antivirus software display a warning?
 
 Unsigned, independently distributed Windows applications can occasionally trigger SmartScreen or antivirus reputation checks. Download only from this repository's official Releases page and verify the release source and version.
-
-The release build does not use UPX or executable compression, which helps reduce false positives.
 
 ## Can I run it from a USB drive or network location?
 
