@@ -10,13 +10,13 @@
     <ApplicationIcon>Assets\app-icon.ico</ApplicationIcon>
     <AssemblyName>QuickFileOrganizer</AssemblyName>
     <RootNamespace>QuickFileOrganizer</RootNamespace>
-    <Version>1.0.1</Version>
-    <FileVersion>1.0.1.0</FileVersion>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <Authors>HeroRaye</Authors>
-    <Copyright>Copyright © 2026 HeroRaye</Copyright>
+    <Copyright>Copyright ? 2026 HeroRaye</Copyright>
     <Product>Quick File Organizer</Product>
-    <Description>檔案整理工具 / Quick File Organizer</Description>
+    <Description>Quick File Organizer - lightweight batch file renaming utility for Windows</Description>
     <RepositoryUrl>https://github.com/HRvillage/quick-file-organizer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
